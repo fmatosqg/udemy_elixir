@@ -8,7 +8,7 @@ defmodule Cards do
   Returns list of cards
   """
   def create_deck do
-    values = ["Ace","Two",  "Three"]
+    values = ["Ace","Two",  "Three", "Four", "Five"]
     suits = ["Spades", "Clubs", "Hearts", "Diamonds"]
 
     for suit <- suits, value <- values do
@@ -21,16 +21,27 @@ defmodule Cards do
     Enum.shuffle(deck)
   end
 
-  def contains?(deck, card) do
-    Enum.member?(deck,card)
-  end
+
+    @doc """
+        ## Examples
+            iex> deck = Cards.create_deck
+            iex> Cards.contains?(deck,"")
+            false
+            iex> Cards.contains?(deck,"Ace of Diamonds")
+            true
+    """
+
+    def contains?(deck, card) do
+        Enum.member?(deck,card)
+    end
 
   @doc """
-    Divides deck into a hand. `hand_size` argument shows how many cards a player gets
+    Divides deck into a hand. `hand_size` argument shows how many cards a player gets,
+    `deck` is a deck of cards
 
         ## Examples
             iex> deck = Cards.create_deck
-            iex> {hand,deck} = Cards.deal(deck,1)
+            iex> {hand,_deck} = Cards.deal(deck,1)
             iex> hand
             ["Ace of Spades"]
   """
@@ -49,7 +60,7 @@ defmodule Cards do
 
     case File.read(filename) do
         {:ok, binary } -> :erlang.binary_to_term binary
-        {:error, _reason} -> "No file '#{filename}' was loaded #{_reason}"
+        {:error, _reason} -> "No file '#{filename}' was loaded"
     end
 
   end
