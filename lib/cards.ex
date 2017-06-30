@@ -4,14 +4,6 @@ defmodule Cards do
     """
 
 
-    def main(input) do
-
-        IO.puts "running"
-       "Hello mix"
-    end
-
-
-
   @doc """
   Returns list of cards
   """

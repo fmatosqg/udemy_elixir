@@ -22,3 +22,9 @@ erl_crash.dump
 
 # idea
 *.iml
+
+
+# binaries compiled
+cards
+identicon
+

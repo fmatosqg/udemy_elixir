@@ -13,7 +13,12 @@ defmodule Identicon do
         |> hash_input
         |> pick_color
         |> build_grid
+        |> build_pixel_map
 
+    end
+
+    def start(_type,_args) do
+        main("banana")
     end
 
     @doc """
@@ -138,7 +143,7 @@ defmodule Identicon do
                 grid: [{11, 1441}, {11, 11}, {11, 19}],
                 hex: nil}
     """
-    def build_pixel_map(%Identicon.Image{grid: grid} = image ) do
+    def build_pixel_map( %Identicon.Image{grid: grid} = image ) do
 
         stride = 5
         square_width_px = 50
@@ -147,9 +152,9 @@ defmodule Identicon do
             x = rem(index,stride)
             y = div(index,stride)
 
-
             {  {x,y} , {x+square_width_px , y+square_width_px} }
         end
+
 
 
     end
