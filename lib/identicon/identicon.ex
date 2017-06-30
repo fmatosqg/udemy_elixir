@@ -17,15 +17,12 @@ defmodule Identicon do
     end
 
     @doc """
-
     Produces md5 hash of string
-
         ## Examples
             iex> Identicon.hash_input []
             %Identicon.Image{hex: [212, 29, 140, 217, 143,
             0, 178, 4, 233, 128,
             9, 152, 236, 248, 66, 126]}
-
     """
     def hash_input(input) do
 
@@ -37,17 +34,13 @@ defmodule Identicon do
     end
 
     @doc """
-
         Uses the first 3 numbbers in image list to build a RGB color
-
         ## Examples
-
             iex> vec = [1,2,3,4,5]
             iex> image = %Identicon.Image{ hex: vec}
             iex> Identicon.pick_color(image )
             %Identicon.Image{ color: {1,2,3} , hex: [1,2,3,4,5] }
     """
-
     def pick_color(image) do
 
         %Identicon.Image { hex: [r,g,b | tail ]} = image
@@ -126,18 +119,40 @@ defmodule Identicon do
     @doc """
 
             ## Examples
-
                 iex> row = [1,2,3]
                 iex> Identicon.mirror_row(row)
                 [1,2,3,2,1]
     """
-
     def mirror_row(row) do
 
         [first,second | _tail ] = row
 
         row ++ [second , first]
 
+    end
+
+    @doc """
+          ## Examples
+              iex> %Identicon.Image{ grid: [{11, 1}, {11, 11} , {11,19} ] }
+              %Identicon.Image{color: nil,
+                grid: [{11, 1441}, {11, 11}, {11, 19}],
+                hex: nil}
+    """
+    def build_pixel_map(%Identicon.Image{grid: grid} = image ) do
+
+        stride = 5
+        square_width_px = 50
+
+        Enum.map grid, fn ({_code,index}) ->
+            x = rem(index,stride)
+            y = div(index,stride)
+
+
+            {  {x,y} , {x+square_width_px , y+square_width_px} }
+        end
+
 
     end
+
+
 end
