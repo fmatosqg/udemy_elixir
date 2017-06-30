@@ -5,11 +5,6 @@ defmodule Identicon do
 
     @doc """
 
-        ## Examples
-
-            iex> Identicon.main "t"
-            %Identicon.Image{color: {227, 88, 239} , hex: [227, 88, 239, 164, 137, 245, 128, 98,
-            241, 13, 215, 49, 107, 101, 100, 158]}
 
     """
     def main(input) do
@@ -17,6 +12,7 @@ defmodule Identicon do
         input
         |> hash_input
         |> pick_color
+        |> build_grid
 
     end
 
@@ -76,4 +72,72 @@ defmodule Identicon do
 
     end
 
+    @doc """
+
+        ## Examples
+
+            iex> image = %Identicon.Image{ hex: [1,2,3, 4,5,6] }
+            iex> Identicon.build_grid(image)
+            %Identicon.Image { grid: [ 1,2,3,2,1 ,
+            4,5,6,5,4 ] , color: nil , hex: [1,2,3, 4,5,6] }
+
+    """
+    def build_grid(%Identicon.Image{ hex: hex} = image) do
+
+        grid =
+            hex
+            |> Enum.chunk(3)
+            |> Enum.map(&mirror_row/1)
+            |> List.flatten
+
+        %Identicon.Image { image | grid: grid }
+
+    end
+
+    @doc """
+        ## Examples
+            iex> image = %Identicon.Image { grid: [11, 12, 13] }
+            iex> Identicon.build_grid_with_index ( image )
+            %Identicon.Image { grid: [{11,0}, {12,1} , {13,2} ] }
+    """
+    def build_grid_with_index(%Identicon.Image{ grid: grid } = image) do
+
+        %Identicon.Image{ image | grid: Enum.with_index(grid) }
+
+    end
+
+    @doc """
+
+        ## Examples
+
+            iex> Identicon.filter_odd_squares(%Identicon.Image {grid: [{11,0}, {12,1} ] } )
+            %Identicon.Image { grid: [ {12, 1} ] }
+    """
+    def filter_odd_squares(%Identicon.Image { grid: grid } = image) do
+
+        grid = Enum.filter grid,
+            fn({ code, _index }) ->
+                rem(code,2) == 0
+            end
+
+        %Identicon.Image { image | grid: grid}
+    end
+
+    @doc """
+
+            ## Examples
+
+                iex> row = [1,2,3]
+                iex> Identicon.mirror_row(row)
+                [1,2,3,2,1]
+    """
+
+    def mirror_row(row) do
+
+        [first,second | _tail ] = row
+
+        row ++ [second , first]
+
+
+    end
 end
