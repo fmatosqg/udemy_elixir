@@ -17,7 +17,7 @@ defmodule Cards.Mixfile do
     # Specify extra applications you'll use from Erlang/Elixir
 
     [
-    mod: {Identicon,[]},
+    mod: {Identicon,[ ]  },
     extra_applications: [:logger]]
   end
 

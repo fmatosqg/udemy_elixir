@@ -14,6 +14,8 @@ defmodule Identicon do
         |> pick_color
         |> build_grid
         |> build_pixel_map
+        |> draw_image
+        |> save_image(input)
 
     end
 
@@ -48,7 +50,7 @@ defmodule Identicon do
     """
     def pick_color(image) do
 
-        %Identicon.Image { hex: [r,g,b | tail ]} = image
+        %Identicon.Image { hex: [r,g,b | _tail ]} = image
 
         %Identicon.Image { image | color: {r,g,b }}
     end
@@ -64,7 +66,7 @@ defmodule Identicon do
                     %Identicon.Image{ color: {1,2,3} , hex: [1,2,3,4,5] }
 
     """
-    def pick_color_smart(%Identicon.Image { hex: [r,g,b | tail ]} = image) do
+    def pick_color_smart(%Identicon.Image { hex: [r,g,b | _tail ]} = image) do
 
         %Identicon.Image { image | color: {r,g,b }}
 
@@ -138,26 +140,63 @@ defmodule Identicon do
 
     @doc """
           ## Examples
-              iex> %Identicon.Image{ grid: [{11, 1}, {11, 11} , {11,19} ] }
+              iex> image = %Identicon.Image{ grid: [{11, 1}, {11, 11} , {11,19} ] }
+              iex> Identicon.build_pixel_map(image)
               %Identicon.Image{color: nil,
-                grid: [{11, 1441}, {11, 11}, {11, 19}],
+                grid: [{11, 1}, {11, 11} , {11,19}],
+                pixel_map: [{{50, 0}, {100, 50}},
+                    {{50, 100}, {100, 150}},
+                    {{200, 150}, {250, 200}}],
                 hex: nil}
     """
-    def build_pixel_map( %Identicon.Image{grid: grid} = image ) do
+    def build_pixel_map(%Identicon.Image{grid: grid} = image) do
 
         stride = 5
         square_width_px = 50
 
-        Enum.map grid, fn ({_code,index}) ->
-            x = rem(index,stride)
-            y = div(index,stride)
+        pixel_map =
+          Enum.map grid, fn ({_code,index}) ->
+                x = rem(index,stride) * 50
+                y = div(index,stride) * 50
 
-            {  {x,y} , {x+square_width_px , y+square_width_px} }
-        end
+                { {x,y},
+                  {x+square_width_px, y+square_width_px}}
+            end
 
-
+        %Identicon.Image{ image | pixel_map: pixel_map }
 
     end
 
+    @doc """
+            ## Examples
+                iex> "example"
+                "example"
+    """
+    def draw_image(%Identicon.Image{color: color, pixel_map: pixel_map }) do
+
+        stride = 5
+        square_width_px = 50
+        dim = stride * square_width_px
+
+        iii = :egd.create(dim,dim)
+        fill = :egd.color(color)
+
+        Enum.each pixel_map, fn ({start,stop}) ->
+          :egd.filledRectangle(iii,start,stop,fill)
+        end
+
+        :egd.render(iii)
+
+    end
+
+    @doc """
+            ## Examples
+                iex> "example"
+                "example"
+    """
+    def save_image(image,filename) do
+
+        File.write("#{filename}.png",image)
+    end
 
 end
