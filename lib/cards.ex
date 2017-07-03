@@ -3,7 +3,6 @@ defmodule Cards do
         Creates decks of cards
     """
 
-
   @doc """
   Returns list of cards
   """
